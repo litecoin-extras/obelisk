@@ -13,6 +13,17 @@ blockchain_interface::blockchain_interface(backend_cluster& backend)
 {
 }
 
+void blockchain_interface::fetch_block(size_t height,
+    bc::blockchain::fetch_handler_block_transaction_hashes handle_fetch){
+    
+    // Height of Block-Header to fetch
+    data_chunk data = uncast_type<uint32_t>(height);
+    backend_.request("blockchain.fetch_block_transaction_hashes", data,
+        std::bind(receive_block_result, _1, handle_fetch));
+
+
+}
+
 void blockchain_interface::fetch_history(const payment_address& address,
     blockchain::fetch_handler_history handle_fetch, size_t from_height)
 {

@@ -16,6 +16,9 @@ void wrap_fetch_history_args(data_chunk& data,
 void receive_history_result(const data_chunk& data,
     blockchain::fetch_handler_history handle_fetch);
 
+void receive_block_result(const data_chunk& data,
+    blockchain::fetch_handler_block_transaction_hashes handle_fetch);
+
 // fetch_transaction stuff
 
 void wrap_fetch_transaction_args(data_chunk& data, const hash_digest& tx_hash);

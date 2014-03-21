@@ -17,6 +17,31 @@ void wrap_fetch_history_args(data_chunk& data,
     BITCOIN_ASSERT(serial.iterator() == data.end());
 }
 
+void receive_block_result(const data_chunk& data,
+    blockchain::fetch_handler_block_transaction_hashes handle_fetch){
+    BITCOIN_ASSERT(data.size() >= 4);
+    std::error_code ec;
+    auto deserial = make_deserializer(data.begin(), data.end());
+    if (!read_error_code(deserial, data.size(), ec))
+        return;
+    BITCOIN_ASSERT(deserial.iterator() == data.begin() + 4);
+    size_t row_size = 32;
+    if ((data.size() - 4) % row_size != 0)
+    {
+        log_error() << "Malformed response for *.fetch_history";
+        return;
+    }
+    size_t number_rows = (data.size() - 4) / row_size;
+    hash_digest_list txs(number_rows);
+    for (size_t i = 0; i < txs.size(); ++i)
+    {
+        hash_digest& row = txs[i];
+        row = deserial.read_hash();
+    }
+    BITCOIN_ASSERT(deserial.iterator() == data.end());
+    handle_fetch(ec, txs);
+
+}
 void receive_history_result(const data_chunk& data,
     blockchain::fetch_handler_history handle_fetch)
 {
