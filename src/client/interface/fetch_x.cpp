@@ -28,7 +28,7 @@ void receive_block_result(const data_chunk& data,
     size_t row_size = 32;
     if ((data.size() - 4) % row_size != 0)
     {
-        log_error() << "Malformed response for *.fetch_history";
+        log_error() << "Malformed response for *.fetch_block";
         return;
     }
     size_t number_rows = (data.size() - 4) / row_size;
